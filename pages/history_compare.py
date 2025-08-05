@@ -7,14 +7,16 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+import numpy as np
+import json
 import re
 import time
 from components.navigation import navigation
-from components.ui_components import UIComponents
 from components.ui_components import ui
 from core.state_manager import state_manager
 from core.page_manager import page_manager
-from utils.data_loader import DataLoader
+from utils.data_loader import data_loader
 
 
 def show():
@@ -180,7 +182,7 @@ def process_uploaded_files(uploaded_files):
 
         # 加载Excel数据
         with st.spinner(f"正在加载 {uploaded_file.name}..."):
-            score_df, sales_df, department_sales_df, ranking_df, error = DataLoader.load_excel_data(uploaded_file)
+            score_df, sales_df, department_sales_df, ranking_df, error = data_loader.load_excel_data(uploaded_file)
 
         if error:
             st.error(f"文件 {uploaded_file.name} 加载失败: {error}")

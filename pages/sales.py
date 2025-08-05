@@ -7,10 +7,12 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
+import json
+import numpy as np
 import re
 from html import escape
 from components.navigation import navigation
-from components.ui_components import UIComponents
+from components.ui_components import ui
 from core.state_manager import state_manager
 
 
@@ -20,7 +22,7 @@ def show():
     navigation.render_breadcrumb()
     
     # 加载CSS样式
-    UIComponents.load_css()
+    ui.load_css()
     
     # 检查数据
     sales_df = state_manager.get_data('sales_df')
@@ -324,7 +326,7 @@ def display_weekly_analysis(sales_df):
                 st.markdown("**各周销售额汇总**")
                 week_sales_data = []
                 for week, data in weekly_totals.items():
-                    formatted_sales = UIComponents.format_amount(data['销售额(万元)'])
+                    formatted_sales = ui.format_amount(data['销售额(万元)'])
                     week_sales_data.append({
                         '周次': week,
                         '销售额': formatted_sales
@@ -335,7 +337,7 @@ def display_weekly_analysis(sales_df):
                 st.markdown("**各周回款额汇总**")
                 week_payment_data = []
                 for week, data in weekly_totals.items():
-                    formatted_payment = UIComponents.format_amount(data['回款额(万元)'])
+                    formatted_payment = ui.format_amount(data['回款额(万元)'])
                     week_payment_data.append({
                         '周次': week,
                         '回款额': formatted_payment

@@ -15,9 +15,9 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 # 导入并运行主应用
 if __name__ == "__main__":
-    from s_a_c_page.main import main
+    from main import main
     main()
 else:
     # Streamlit Cloud 部署时的入口点
-    from s_a_c_page.main import main
+    from main import main
     main() 
