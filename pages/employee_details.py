@@ -136,6 +136,9 @@ def display_employee_charts(employee_trend_df):
     """显示员工对比图表"""
     st.markdown("### 📈 员工销售回款历史对比")
     
+    # 添加图例操作提示
+    st.info("💡 提示：点击图例可以隐藏或显示对应的数据线")
+    
     # 1. 员工销售额趋势图
     fig_emp_sales = px.line(
         employee_trend_df, x='月份', y='销售额(万元)', color='员工',
@@ -143,8 +146,8 @@ def display_employee_charts(employee_trend_df):
         color_discrete_sequence=px.colors.qualitative.Vivid
     )
     fig_emp_sales.update_layout(
-        height=450, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-        legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5)
+        height=550, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5)
     )
     fig_emp_sales.update_xaxes(gridcolor='rgba(0,0,0,0.05)')
     fig_emp_sales.update_yaxes(gridcolor='rgba(0,0,0,0.05)')
@@ -161,8 +164,8 @@ def display_employee_charts(employee_trend_df):
         color_discrete_sequence=px.colors.qualitative.Vivid
     )
     fig_emp_payment.update_layout(
-        height=450, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-        legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5)
+        height=550, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5)
     )
     fig_emp_payment.update_xaxes(gridcolor='rgba(0,0,0,0.05)')
     fig_emp_payment.update_yaxes(gridcolor='rgba(0,0,0,0.05)')
@@ -179,8 +182,8 @@ def display_employee_charts(employee_trend_df):
         color_discrete_sequence=px.colors.qualitative.Vivid
     )
     fig_emp_overdue.update_layout(
-        height=450, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
-        legend=dict(orientation="h", yanchor="bottom", y=-0.2, xanchor="center", x=0.5)
+        height=550, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5)
     )
     fig_emp_overdue.update_xaxes(gridcolor='rgba(0,0,0,0.05)')
     fig_emp_overdue.update_yaxes(gridcolor='rgba(0,0,0,0.05)')

@@ -181,14 +181,21 @@ def show():
         payment_melted['周序号'] = payment_melted['周次'].str.extract(r'第(\d+)周').astype(int)
 
     col3, col4 = st.columns(2)
+    
+    # 添加图例操作提示
+    st.info("💡 提示：点击图例可以隐藏或显示对应的数据线")
+    
     with col3:
         st.markdown("#### 各周销售额走势")
         if not sales_melted.empty:
             fig_sales_trend = px.line(sales_melted.sort_values('周序号'), x='周次', y='销售额(万元)', color='部门',
                                       title='各部门周销售额趋势', markers=True,
                                       labels={'销售额(万元)': '销售额 (万元)', '周次': '周次'})
-            fig_sales_trend.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)',
-                                          font=dict(color='#1D1D1F'), xaxis_title=None)
+            fig_sales_trend.update_layout(
+                height=550, plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)',
+                font=dict(color='#1D1D1F'), xaxis_title=None,
+                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5)
+            )
             st.plotly_chart(fig_sales_trend, use_container_width=True)
         else:
             st.info(f"无周销售额数据可供展示。检测到的销售额周次: {available_sales_weeks}")
@@ -203,8 +210,11 @@ def show():
                                       title='各部门周回款额趋势', markers=True, 
                                       category_orders={"周次": custom_x_labels},
                                       labels={'回款额(万元)': '回款额 (万元)', '周次': '周次'})
-            fig_payment_trend.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)',
-                                            font=dict(color='#1D1D1F'), xaxis_title=None)
+            fig_payment_trend.update_layout(
+                height=550, plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)',
+                font=dict(color='#1D1D1F'), xaxis_title=None,
+                legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5)
+            )
             st.plotly_chart(fig_payment_trend, use_container_width=True)
         else:
             st.info(f"无周回款额数据可供展示。检测到的回款周次: {available_payment_weeks}")

@@ -86,6 +86,9 @@ def display_overall_trends(history_files):
     if len(trend_df) >= 2:
         st.markdown("### 📈 总体趋势分析")
         
+        # 添加图例操作提示
+        st.info("💡 提示：点击图例可以隐藏或显示对应的数据线")
+        
         # 1. 总销售额月度变化趋势
         fig_sales = px.line(
             trend_df, x='月份', y='总销售额(万元)',
@@ -93,7 +96,8 @@ def display_overall_trends(history_files):
             color_discrete_sequence=['#0A84FF']
         )
         fig_sales.update_layout(
-            height=450, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)'
+            height=550, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5)
         )
         fig_sales.update_xaxes(gridcolor='rgba(0,0,0,0.05)')
         fig_sales.update_yaxes(gridcolor='rgba(0,0,0,0.05)')
@@ -110,7 +114,8 @@ def display_overall_trends(history_files):
             color_discrete_sequence=['#BF5AF2']
         )
         fig_payment.update_layout(
-            height=450, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)'
+            height=550, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5)
         )
         fig_payment.update_xaxes(gridcolor='rgba(0,0,0,0.05)')
         fig_payment.update_yaxes(gridcolor='rgba(0,0,0,0.05)')
@@ -127,7 +132,8 @@ def display_overall_trends(history_files):
             color_discrete_sequence=['#FF453A']
         )
         fig_overdue.update_layout(
-            height=450, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)'
+            height=550, paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)',
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="center", x=0.5)
         )
         fig_overdue.update_xaxes(gridcolor='rgba(0,0,0,0.05)')
         fig_overdue.update_yaxes(gridcolor='rgba(0,0,0,0.05)')
