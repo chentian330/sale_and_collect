@@ -57,6 +57,49 @@ def display_sales_overview(sales_df):
     filtered_df = sales_df[sales_df['员工姓名'] != '合计'].copy()
     filtered_df = filtered_df[filtered_df['员工姓名'].notna()]
 
+    # 辅助函数：检测可用周次
+    def get_available_weeks(df):
+        """检测数据中可用的周次"""
+        import re
+        week_pattern = r'第(\d+)周销售额'
+        available_weeks = []
+        for col in df.columns:
+            match = re.match(week_pattern, col)
+            if match:
+                week_num = int(match.group(1))
+                # 检查该周是否有实际数据
+                week_col = f'第{week_num}周销售额'
+                if week_col in df.columns and df[week_col].sum() > 0:
+                    available_weeks.append(week_num)
+        return sorted(set(available_weeks))
+
+    # 辅助函数：计算累计完成率
+    def calculate_cumulative_progress(df, week_num, task_col, week_prefix):
+        """计算到第X周的累计完成率"""
+        if task_col not in df.columns:
+            return None
+        
+        cumulative_amount = 0
+        for w in range(1, week_num + 1):
+            week_col = f"{week_prefix}{w}周销售额" if "销售" in week_prefix else f"{week_prefix}{w}周回款合计"
+            if week_col in df.columns:
+                cumulative_amount += df[week_col].sum()
+        
+        total_task = df[task_col].sum()
+        return (cumulative_amount / total_task * 100) if total_task > 0 else 0
+
+    # 辅助函数：查找可用的历史周数据
+    def find_previous_week_data(available_weeks, current_week):
+        """向前查找可用的历史周数据"""
+        for prev_week in range(current_week - 1, 0, -1):
+            if prev_week in available_weeks:
+                return prev_week
+        return None
+
+    # 检测当前周次
+    available_weeks = get_available_weeks(filtered_df)
+    current_week = max(available_weeks) if available_weeks else None
+
     # 直接使用Excel中的数据，不重新计算
     # 将金额从元转换为万元用于显示
     total_sales = filtered_df['本月销售额'].sum() / 10000
@@ -64,20 +107,75 @@ def display_sales_overview(sales_df):
     avg_sales = filtered_df['本月销售额'].mean() / 10000
     avg_payment = filtered_df['本月回款合计'].mean() / 10000
 
-    # 直接使用Excel中的完成进度数据
+    # 计算销售任务完成率的delta - 混合方案
     if '销售业绩完成进度' in filtered_df.columns:
         avg_sales_progress = filtered_df['销售业绩完成进度'].mean() * 100
-        progress_delta = f"{avg_sales_progress - 100:.1f}%" if avg_sales_progress >= 100 else f"{avg_sales_progress - 100:.1f}%"
-        sales_delta_color = "normal" if avg_sales_progress >= 100 else "inverse"
+        
+        # 混合方案的delta计算
+        if current_week is None or current_week == 1:
+            # 第1周或无周数据时不显示delta
+            progress_delta = None
+            sales_delta_color = "off"
+        else:
+            # 查找可用的历史周数据
+            previous_week = find_previous_week_data(available_weeks, current_week)
+            
+            if previous_week is not None and '本月销售任务' in filtered_df.columns:
+                # 计算当前周和上一周的累计完成率
+                current_progress = calculate_cumulative_progress(
+                    filtered_df, current_week, '本月销售任务', '第'
+                )
+                previous_progress = calculate_cumulative_progress(
+                    filtered_df, previous_week, '本月销售任务', '第'
+                )
+                
+                if current_progress is not None and previous_progress is not None:
+                    delta_value = current_progress - previous_progress
+                    progress_delta = f"{delta_value:+.1f}%"
+                    sales_delta_color = "normal" if delta_value >= 0 else "inverse"
+                else:
+                    progress_delta = None
+                    sales_delta_color = "off"
+            else:
+                progress_delta = None
+                sales_delta_color = "off"
     else:
         avg_sales_progress = None
         progress_delta = None
         sales_delta_color = "off"
 
+    # 计算回款任务完成率的delta - 混合方案
     if '回款业绩完成进度' in filtered_df.columns:
         avg_payment_progress = filtered_df['回款业绩完成进度'].mean() * 100
-        payment_progress_delta = f"{avg_payment_progress - 100:.1f}%" if avg_payment_progress >= 100 else f"{avg_payment_progress - 100:.1f}%"
-        payment_delta_color = "normal" if avg_payment_progress >= 100 else "inverse"
+        
+        # 混合方案的delta计算
+        if current_week is None or current_week == 1:
+            # 第1周或无周数据时不显示delta
+            payment_progress_delta = None
+            payment_delta_color = "off"
+        else:
+            # 查找可用的历史周数据
+            previous_week = find_previous_week_data(available_weeks, current_week)
+            
+            if previous_week is not None and '本月回款任务' in filtered_df.columns:
+                # 计算当前周和上一周的累计完成率
+                current_progress = calculate_cumulative_progress(
+                    filtered_df, current_week, '本月回款任务', '第'
+                )
+                previous_progress = calculate_cumulative_progress(
+                    filtered_df, previous_week, '本月回款任务', '第'
+                )
+                
+                if current_progress is not None and previous_progress is not None:
+                    delta_value = current_progress - previous_progress
+                    payment_progress_delta = f"{delta_value:+.1f}%"
+                    payment_delta_color = "normal" if delta_value >= 0 else "inverse"
+                else:
+                    payment_progress_delta = None
+                    payment_delta_color = "off"
+            else:
+                payment_progress_delta = None
+                payment_delta_color = "off"
     else:
         avg_payment_progress = None
         payment_progress_delta = None
