@@ -116,137 +116,280 @@ def display_sales_overview(sales_df):
     if '销售业绩完成进度' in filtered_df.columns or '回款业绩完成进度' in filtered_df.columns:
         st.markdown("#### 业绩完成进度分布")
         
-        # 销售业绩完成进度分布表格
-        if '销售业绩完成进度' in filtered_df.columns:
-            st.markdown("##### 销售业绩完成进度")
-            
-            # 按完成率分类员工
-            excellent_employees = []  # >=100%
-            good_employees = []       # 66%-99%
-            need_effort_employees = [] # <66%
-            
-            for _, row in filtered_df.iterrows():
-                progress = row.get('销售业绩完成进度', 0)
-                name = row.get('员工姓名', '')
+        # 创建左右两列布局
+        main_col1, main_col2 = st.columns(2)
+        
+        # 左侧：销售业绩完成进度分布
+        with main_col1:
+            if '销售业绩完成进度' in filtered_df.columns:
+                st.markdown("##### 📈 销售业绩完成进度")
                 
-                if pd.notna(progress) and pd.notna(name):
-                    if progress >= 1.0:
-                        excellent_employees.append(name)
-                    elif progress >= 0.66:
-                        good_employees.append(name)
-                    else:
-                        need_effort_employees.append(name)
-            
-            # 创建三列表格
-            progress_cols = st.columns(3)
-            
-            with progress_cols[0]:
-                st.markdown("""
-                <div style="text-align: center; padding: 15px; background: linear-gradient(135deg, #30D158, #34C759); border-radius: 10px; margin-bottom: 10px;">
-                    <h4 style="color: white; margin: 0; font-weight: 600;">已达成</h4>
-                    <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0 0; font-size: 0.9rem;">大于等于100%完成率</p>
-                </div>
-                """, unsafe_allow_html=True)
+                # 按完成率分类员工
+                excellent_employees = []  # >=100%
+                good_employees = []       # 66%-99%
+                need_effort_employees = [] # <66%
                 
+                for _, row in filtered_df.iterrows():
+                    progress = row.get('销售业绩完成进度', 0)
+                    name = row.get('员工姓名', '')
+                    
+                    if pd.notna(progress) and pd.notna(name):
+                        if progress >= 1.0:
+                            excellent_employees.append(name)
+                        elif progress >= 0.66:
+                            good_employees.append(name)
+                        else:
+                            need_effort_employees.append(name)
+                
+                # 已达成卡片
+                excellent_names_html = ""
                 if excellent_employees:
-                    for emp in excellent_employees:
-                        st.markdown(f"✅ {emp}")
+                    # 分三行显示人名
+                    total_count = len(excellent_employees)
+                    row1_count = (total_count + 2) // 3  # 向上取整
+                    row2_count = (total_count - row1_count + 1) // 2  # 剩余的均分
+                    
+                    row1_employees = excellent_employees[:row1_count]
+                    row2_employees = excellent_employees[row1_count:row1_count + row2_count]
+                    row3_employees = excellent_employees[row1_count + row2_count:]
+                    
+                    if row1_employees:
+                        row1_text = "".join([f"<span style='display: inline-block; min-width: 80px; margin-right: 10px;'>✅ {emp}</span>" for emp in row1_employees])
+                        excellent_names_html += f"<div style='margin-bottom: 5px;'>{row1_text}</div>"
+                    
+                    if row2_employees:
+                        row2_text = "".join([f"<span style='display: inline-block; min-width: 80px; margin-right: 10px;'>✅ {emp}</span>" for emp in row2_employees])
+                        excellent_names_html += f"<div style='margin-bottom: 5px;'>{row2_text}</div>"
+                    
+                    if row3_employees:
+                        row3_text = "".join([f"<span style='display: inline-block; min-width: 80px; margin-right: 10px;'>✅ {emp}</span>" for emp in row3_employees])
+                        excellent_names_html += f"<div>{row3_text}</div>"
                 else:
-                    st.markdown("*暂无*")
-            
-            with progress_cols[1]:
-                st.markdown("""
-                <div style="text-align: center; padding: 15px; background: linear-gradient(135deg, #FFD60A, #FF9F0A); border-radius: 10px; margin-bottom: 10px;">
-                    <h4 style="color: white; margin: 0; font-weight: 600;">良好达成</h4>
-                    <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0 0; font-size: 0.9rem;">66-99%完成率</p>
+                    excellent_names_html = "<div style='color: rgba(255,255,255,0.7);'>*暂无*</div>"
+                
+                st.markdown(f"""
+                <div style="background: linear-gradient(135deg, #30D158, #34C759); border-radius: 10px; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; min-height: 100px;">
+                    <div style="flex: 1; text-align: center; border-right: 1px solid rgba(255,255,255,0.2); padding-right: 15px;">
+                        <h4 style="color: white; margin: 0; font-weight: 600;">已达成</h4>
+                        <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0 0; font-size: 0.9rem;">≥100%</p>
+                    </div>
+                    <div style="flex: 2; color: white; padding-left: 15px; line-height: 1.4;">
+                        {excellent_names_html}
+                    </div>
                 </div>
                 """, unsafe_allow_html=True)
                 
+                # 良好达成卡片
+                good_names_html = ""
                 if good_employees:
-                    for emp in good_employees:
-                        st.markdown(f"🟡 {emp}")
+                    # 分三行显示人名
+                    total_count = len(good_employees)
+                    row1_count = (total_count + 2) // 3  # 向上取整
+                    row2_count = (total_count - row1_count + 1) // 2  # 剩余的均分
+                    
+                    row1_employees = good_employees[:row1_count]
+                    row2_employees = good_employees[row1_count:row1_count + row2_count]
+                    row3_employees = good_employees[row1_count + row2_count:]
+                    
+                    if row1_employees:
+                        row1_text = "".join([f"<span style='display: inline-block; min-width: 80px; margin-right: 10px;'>🟡 {emp}</span>" for emp in row1_employees])
+                        good_names_html += f"<div style='margin-bottom: 5px;'>{row1_text}</div>"
+                    
+                    if row2_employees:
+                        row2_text = "".join([f"<span style='display: inline-block; min-width: 80px; margin-right: 10px;'>🟡 {emp}</span>" for emp in row2_employees])
+                        good_names_html += f"<div style='margin-bottom: 5px;'>{row2_text}</div>"
+                    
+                    if row3_employees:
+                        row3_text = "".join([f"<span style='display: inline-block; min-width: 80px; margin-right: 10px;'>🟡 {emp}</span>" for emp in row3_employees])
+                        good_names_html += f"<div>{row3_text}</div>"
                 else:
-                    st.markdown("*暂无*")
-            
-            with progress_cols[2]:
-                st.markdown("""
-                <div style="text-align: center; padding: 15px; background: linear-gradient(135deg, #FF453A, #FF6B6B); border-radius: 10px; margin-bottom: 10px;">
-                    <h4 style="color: white; margin: 0; font-weight: 600;">须努力</h4>
-                    <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0 0; font-size: 0.9rem;">小于66%完成率</p>
+                    good_names_html = "<div style='color: rgba(255,255,255,0.7);'>*暂无*</div>"
+                
+                st.markdown(f"""
+                <div style="background: linear-gradient(135deg, #FFD60A, #FF9F0A); border-radius: 10px; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; min-height: 100px;">
+                    <div style="flex: 1; text-align: center; border-right: 1px solid rgba(255,255,255,0.2); padding-right: 15px;">
+                        <h4 style="color: white; margin: 0; font-weight: 600;">良好达成</h4>
+                        <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0 0; font-size: 0.9rem;">66-99%</p>
+                    </div>
+                    <div style="flex: 2; color: white; padding-left: 15px; line-height: 1.4;">
+                        {good_names_html}
+                    </div>
                 </div>
                 """, unsafe_allow_html=True)
                 
+                # 须努力卡片
+                need_effort_names_html = ""
                 if need_effort_employees:
-                    for emp in need_effort_employees:
-                        st.markdown(f"🔴 {emp}")
+                    # 分三行显示人名
+                    total_count = len(need_effort_employees)
+                    row1_count = (total_count + 2) // 3  # 向上取整
+                    row2_count = (total_count - row1_count + 1) // 2  # 剩余的均分
+                    
+                    row1_employees = need_effort_employees[:row1_count]
+                    row2_employees = need_effort_employees[row1_count:row1_count + row2_count]
+                    row3_employees = need_effort_employees[row1_count + row2_count:]
+                    
+                    if row1_employees:
+                        row1_text = "".join([f"<span style='display: inline-block; min-width: 80px; margin-right: 10px;'>🔴 {emp}</span>" for emp in row1_employees])
+                        need_effort_names_html += f"<div style='margin-bottom: 5px;'>{row1_text}</div>"
+                    
+                    if row2_employees:
+                        row2_text = "".join([f"<span style='display: inline-block; min-width: 80px; margin-right: 10px;'>🔴 {emp}</span>" for emp in row2_employees])
+                        need_effort_names_html += f"<div style='margin-bottom: 5px;'>{row2_text}</div>"
+                    
+                    if row3_employees:
+                        row3_text = "".join([f"<span style='display: inline-block; min-width: 80px; margin-right: 10px;'>🔴 {emp}</span>" for emp in row3_employees])
+                        need_effort_names_html += f"<div>{row3_text}</div>"
                 else:
-                    st.markdown("*暂无*")
+                    need_effort_names_html = "<div style='color: rgba(255,255,255,0.7);'>*暂无*</div>"
+                
+                st.markdown(f"""
+                <div style="background: linear-gradient(135deg, #FF453A, #FF6B6B); border-radius: 10px; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; min-height: 100px;">
+                    <div style="flex: 1; text-align: center; border-right: 1px solid rgba(255,255,255,0.2); padding-right: 15px;">
+                        <h4 style="color: white; margin: 0; font-weight: 600;">须努力</h4>
+                        <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0 0; font-size: 0.9rem;"><66%</p>
+                    </div>
+                    <div style="flex: 2; color: white; padding-left: 15px; line-height: 1.4;">
+                        {need_effort_names_html}
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
 
-        # 回款业绩完成进度分布表格
-        if '回款业绩完成进度' in filtered_df.columns:
-            st.markdown("##### 回款业绩完成进度")
-            
-            # 按完成率分类员工
-            excellent_employees = []  # >=100%
-            good_employees = []       # 66%-99%
-            need_effort_employees = [] # <66%
-            
-            for _, row in filtered_df.iterrows():
-                progress = row.get('回款业绩完成进度', 0)
-                name = row.get('员工姓名', '')
+        # 右侧：回款业绩完成进度分布
+        with main_col2:
+            if '回款业绩完成进度' in filtered_df.columns:
+                st.markdown("##### 💰 回款业绩完成进度")
                 
-                if pd.notna(progress) and pd.notna(name):
-                    if progress >= 1.0:
-                        excellent_employees.append(name)
-                    elif progress >= 0.66:
-                        good_employees.append(name)
-                    else:
-                        need_effort_employees.append(name)
-            
-            # 创建三列表格
-            progress_cols = st.columns(3)
-            
-            with progress_cols[0]:
-                st.markdown("""
-                <div style="text-align: center; padding: 15px; background: linear-gradient(135deg, #30D158, #34C759); border-radius: 10px; margin-bottom: 10px;">
-                    <h4 style="color: white; margin: 0; font-weight: 600;">已达成</h4>
-                    <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0 0; font-size: 0.9rem;">大于等于100%完成率</p>
-                </div>
-                """, unsafe_allow_html=True)
+                # 按完成率分类员工
+                excellent_employees = []  # >=100%
+                good_employees = []       # 66%-99%
+                need_effort_employees = [] # <66%
                 
+                for _, row in filtered_df.iterrows():
+                    progress = row.get('回款业绩完成进度', 0)
+                    name = row.get('员工姓名', '')
+                    
+                    if pd.notna(progress) and pd.notna(name):
+                        if progress >= 1.0:
+                            excellent_employees.append(name)
+                        elif progress >= 0.66:
+                            good_employees.append(name)
+                        else:
+                            need_effort_employees.append(name)
+                
+                # 已达成卡片
+                excellent_names_html = ""
                 if excellent_employees:
-                    for emp in excellent_employees:
-                        st.markdown(f"✅ {emp}")
+                    # 分三行显示人名
+                    total_count = len(excellent_employees)
+                    row1_count = (total_count + 2) // 3  # 向上取整
+                    row2_count = (total_count - row1_count + 1) // 2  # 剩余的均分
+                    
+                    row1_employees = excellent_employees[:row1_count]
+                    row2_employees = excellent_employees[row1_count:row1_count + row2_count]
+                    row3_employees = excellent_employees[row1_count + row2_count:]
+                    
+                    if row1_employees:
+                        row1_text = "".join([f"<span style='display: inline-block; min-width: 80px; margin-right: 10px;'>✅ {emp}</span>" for emp in row1_employees])
+                        excellent_names_html += f"<div style='margin-bottom: 5px;'>{row1_text}</div>"
+                    
+                    if row2_employees:
+                        row2_text = "".join([f"<span style='display: inline-block; min-width: 80px; margin-right: 10px;'>✅ {emp}</span>" for emp in row2_employees])
+                        excellent_names_html += f"<div style='margin-bottom: 5px;'>{row2_text}</div>"
+                    
+                    if row3_employees:
+                        row3_text = "".join([f"<span style='display: inline-block; min-width: 80px; margin-right: 10px;'>✅ {emp}</span>" for emp in row3_employees])
+                        excellent_names_html += f"<div>{row3_text}</div>"
                 else:
-                    st.markdown("*暂无*")
-            
-            with progress_cols[1]:
-                st.markdown("""
-                <div style="text-align: center; padding: 15px; background: linear-gradient(135deg, #FFD60A, #FF9F0A); border-radius: 10px; margin-bottom: 10px;">
-                    <h4 style="color: white; margin: 0; font-weight: 600;">良好达成</h4>
-                    <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0 0; font-size: 0.9rem;">66-99%完成率</p>
+                    excellent_names_html = "<div style='color: rgba(255,255,255,0.7);'>*暂无*</div>"
+                
+                st.markdown(f"""
+                <div style="background: linear-gradient(135deg, #30D158, #34C759); border-radius: 10px; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; min-height: 100px;">
+                    <div style="flex: 1; text-align: center; border-right: 1px solid rgba(255,255,255,0.2); padding-right: 15px;">
+                        <h4 style="color: white; margin: 0; font-weight: 600;">已达成</h4>
+                        <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0 0; font-size: 0.9rem;">≥100%</p>
+                    </div>
+                    <div style="flex: 2; color: white; padding-left: 15px; line-height: 1.4;">
+                        {excellent_names_html}
+                    </div>
                 </div>
                 """, unsafe_allow_html=True)
                 
+                # 良好达成卡片
+                good_names_html = ""
                 if good_employees:
-                    for emp in good_employees:
-                        st.markdown(f"🟡 {emp}")
+                    # 分三行显示人名
+                    total_count = len(good_employees)
+                    row1_count = (total_count + 2) // 3  # 向上取整
+                    row2_count = (total_count - row1_count + 1) // 2  # 剩余的均分
+                    
+                    row1_employees = good_employees[:row1_count]
+                    row2_employees = good_employees[row1_count:row1_count + row2_count]
+                    row3_employees = good_employees[row1_count + row2_count:]
+                    
+                    if row1_employees:
+                        row1_text = "".join([f"<span style='display: inline-block; min-width: 80px; margin-right: 10px;'>🟡 {emp}</span>" for emp in row1_employees])
+                        good_names_html += f"<div style='margin-bottom: 5px;'>{row1_text}</div>"
+                    
+                    if row2_employees:
+                        row2_text = "".join([f"<span style='display: inline-block; min-width: 80px; margin-right: 10px;'>🟡 {emp}</span>" for emp in row2_employees])
+                        good_names_html += f"<div style='margin-bottom: 5px;'>{row2_text}</div>"
+                    
+                    if row3_employees:
+                        row3_text = "".join([f"<span style='display: inline-block; min-width: 80px; margin-right: 10px;'>🟡 {emp}</span>" for emp in row3_employees])
+                        good_names_html += f"<div>{row3_text}</div>"
                 else:
-                    st.markdown("*暂无*")
-            
-            with progress_cols[2]:
-                st.markdown("""
-                <div style="text-align: center; padding: 15px; background: linear-gradient(135deg, #FF453A, #FF6B6B); border-radius: 10px; margin-bottom: 10px;">
-                    <h4 style="color: white; margin: 0; font-weight: 600;">须努力</h4>
-                    <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0 0; font-size: 0.9rem;">小于66%完成率</p>
+                    good_names_html = "<div style='color: rgba(255,255,255,0.7);'>*暂无*</div>"
+                
+                st.markdown(f"""
+                <div style="background: linear-gradient(135deg, #FFD60A, #FF9F0A); border-radius: 10px; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; min-height: 100px;">
+                    <div style="flex: 1; text-align: center; border-right: 1px solid rgba(255,255,255,0.2); padding-right: 15px;">
+                        <h4 style="color: white; margin: 0; font-weight: 600;">良好达成</h4>
+                        <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0 0; font-size: 0.9rem;">66-99%</p>
+                    </div>
+                    <div style="flex: 2; color: white; padding-left: 15px; line-height: 1.4;">
+                        {good_names_html}
+                    </div>
                 </div>
                 """, unsafe_allow_html=True)
                 
+                # 须努力卡片
+                need_effort_names_html = ""
                 if need_effort_employees:
-                    for emp in need_effort_employees:
-                        st.markdown(f"🔴 {emp}")
+                    # 分三行显示人名
+                    total_count = len(need_effort_employees)
+                    row1_count = (total_count + 2) // 3  # 向上取整
+                    row2_count = (total_count - row1_count + 1) // 2  # 剩余的均分
+                    
+                    row1_employees = need_effort_employees[:row1_count]
+                    row2_employees = need_effort_employees[row1_count:row1_count + row2_count]
+                    row3_employees = need_effort_employees[row1_count + row2_count:]
+                    
+                    if row1_employees:
+                        row1_text = "".join([f"<span style='display: inline-block; min-width: 80px; margin-right: 10px;'>🔴 {emp}</span>" for emp in row1_employees])
+                        need_effort_names_html += f"<div style='margin-bottom: 5px;'>{row1_text}</div>"
+                    
+                    if row2_employees:
+                        row2_text = "".join([f"<span style='display: inline-block; min-width: 80px; margin-right: 10px;'>🔴 {emp}</span>" for emp in row2_employees])
+                        need_effort_names_html += f"<div style='margin-bottom: 5px;'>{row2_text}</div>"
+                    
+                    if row3_employees:
+                        row3_text = "".join([f"<span style='display: inline-block; min-width: 80px; margin-right: 10px;'>🔴 {emp}</span>" for emp in row3_employees])
+                        need_effort_names_html += f"<div>{row3_text}</div>"
                 else:
-                    st.markdown("*暂无*")
+                    need_effort_names_html = "<div style='color: rgba(255,255,255,0.7);'>*暂无*</div>"
+                
+                st.markdown(f"""
+                <div style="background: linear-gradient(135deg, #FF453A, #FF6B6B); border-radius: 10px; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; min-height: 100px;">
+                    <div style="flex: 1; text-align: center; border-right: 1px solid rgba(255,255,255,0.2); padding-right: 15px;">
+                        <h4 style="color: white; margin: 0; font-weight: 600;">须努力</h4>
+                        <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0 0; font-size: 0.9rem;"><66%</p>
+                    </div>
+                    <div style="flex: 2; color: white; padding-left: 15px; line-height: 1.4;">
+                        {need_effort_names_html}
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
 
 
 
