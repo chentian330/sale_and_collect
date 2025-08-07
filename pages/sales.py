@@ -268,7 +268,7 @@ def display_sales_overview(sales_df):
                 st.markdown(f"""
                 <div style="background: linear-gradient(135deg, #30D158, #34C759); border-radius: 10px; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; min-height: 100px;">
                     <div style="flex: 1; text-align: center; border-right: 1px solid rgba(255,255,255,0.2); padding-right: 15px;">
-                        <h4 style="color: white; margin: 0; font-weight: 600;">已达成</h4>
+                    <h4 style="color: white; margin: 0; font-weight: 600;">已达成</h4>
                         <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0 0; font-size: 0.9rem;">≥100%</p>
                     </div>
                     <div style="flex: 2; color: white; padding-left: 15px; line-height: 1.4;">
@@ -306,7 +306,7 @@ def display_sales_overview(sales_df):
                 st.markdown(f"""
                 <div style="background: linear-gradient(135deg, #FFD60A, #FF9F0A); border-radius: 10px; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; min-height: 100px;">
                     <div style="flex: 1; text-align: center; border-right: 1px solid rgba(255,255,255,0.2); padding-right: 15px;">
-                        <h4 style="color: white; margin: 0; font-weight: 600;">良好达成</h4>
+                    <h4 style="color: white; margin: 0; font-weight: 600;">良好达成</h4>
                         <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0 0; font-size: 0.9rem;">66-99%</p>
                     </div>
                     <div style="flex: 2; color: white; padding-left: 15px; line-height: 1.4;">
@@ -344,7 +344,7 @@ def display_sales_overview(sales_df):
                 st.markdown(f"""
                 <div style="background: linear-gradient(135deg, #FF453A, #FF6B6B); border-radius: 10px; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; min-height: 100px;">
                     <div style="flex: 1; text-align: center; border-right: 1px solid rgba(255,255,255,0.2); padding-right: 15px;">
-                        <h4 style="color: white; margin: 0; font-weight: 600;">须努力</h4>
+                    <h4 style="color: white; margin: 0; font-weight: 600;">须努力</h4>
                         <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0 0; font-size: 0.9rem;"><66%</p>
                     </div>
                     <div style="flex: 2; color: white; padding-left: 15px; line-height: 1.4;">
@@ -352,12 +352,13 @@ def display_sales_overview(sales_df):
                     </div>
                 </div>
                 """, unsafe_allow_html=True)
-
+                
         # 右侧：回款业绩完成进度分布
         with main_col2:
+
             if '回款业绩完成进度' in filtered_df.columns:
                 st.markdown("##### 💰 回款业绩完成进度")
-                
+            
                 # 按完成率分类员工
                 excellent_employees = []  # >=100%
                 good_employees = []       # 66%-99%
@@ -404,7 +405,7 @@ def display_sales_overview(sales_df):
                 st.markdown(f"""
                 <div style="background: linear-gradient(135deg, #30D158, #34C759); border-radius: 10px; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; min-height: 100px;">
                     <div style="flex: 1; text-align: center; border-right: 1px solid rgba(255,255,255,0.2); padding-right: 15px;">
-                        <h4 style="color: white; margin: 0; font-weight: 600;">已达成</h4>
+                    <h4 style="color: white; margin: 0; font-weight: 600;">已达成</h4>
                         <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0 0; font-size: 0.9rem;">≥100%</p>
                     </div>
                     <div style="flex: 2; color: white; padding-left: 15px; line-height: 1.4;">
@@ -442,7 +443,7 @@ def display_sales_overview(sales_df):
                 st.markdown(f"""
                 <div style="background: linear-gradient(135deg, #FFD60A, #FF9F0A); border-radius: 10px; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; min-height: 100px;">
                     <div style="flex: 1; text-align: center; border-right: 1px solid rgba(255,255,255,0.2); padding-right: 15px;">
-                        <h4 style="color: white; margin: 0; font-weight: 600;">良好达成</h4>
+                    <h4 style="color: white; margin: 0; font-weight: 600;">良好达成</h4>
                         <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0 0; font-size: 0.9rem;">66-99%</p>
                     </div>
                     <div style="flex: 2; color: white; padding-left: 15px; line-height: 1.4;">
@@ -480,7 +481,7 @@ def display_sales_overview(sales_df):
                 st.markdown(f"""
                 <div style="background: linear-gradient(135deg, #FF453A, #FF6B6B); border-radius: 10px; padding: 20px; margin-bottom: 15px; display: flex; align-items: center; min-height: 100px;">
                     <div style="flex: 1; text-align: center; border-right: 1px solid rgba(255,255,255,0.2); padding-right: 15px;">
-                        <h4 style="color: white; margin: 0; font-weight: 600;">须努力</h4>
+                    <h4 style="color: white; margin: 0; font-weight: 600;">须努力</h4>
                         <p style="color: rgba(255,255,255,0.9); margin: 5px 0 0 0; font-size: 0.9rem;"><66%</p>
                     </div>
                     <div style="flex: 2; color: white; padding-left: 15px; line-height: 1.4;">
