@@ -1,0 +1,13 @@
+# 进入项目目录
+F:
+cd PythonProject_s_a_c_page
+
+git add .              # 添加所有修改的文件
+# 或者
+git add 文件名.py       # 只添加特定文件
+
+git commit -m "描述你的修改"
+
+git push
+
+git status    # 查看哪些文件被修改了（非必须）

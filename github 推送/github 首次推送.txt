@@ -5,6 +5,10 @@ cd PythonProject_s_a_c_page
 git init
 
 git remote add origin https://github.com/chentian330/sale_and_collect.git
+这里如果出现remote origin already exists则要：
+git remote remove origin
+git remote add origin https://github.com/chentian330/sale_and_collect.git
+之后继续：
 
 git remote -v
 
@@ -13,11 +17,7 @@ git add .
 git config --global user.name "chentian330"
 git config --global user.email "thunderchen330@gmail.com"
 
-git commit -m "fix: 修复历史数据对比总体趋势数据获取逻辑
-
-- 使用合计行数据替代sum()计算
-- 修复总销售额、总回款额、总逾期未收回额的数据来源
-- 简化启动脚本，直接使用.venv中的Python"
+git commit -m "fix: XXXXXX"
 
 git branch -M main
 git push -u origin main
