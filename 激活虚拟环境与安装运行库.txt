@@ -1,0 +1,5 @@
+WIN+R CMD
+
+cd /d F:\PythonProject_s_a_c_page
+.venv\Scripts\activate
+pip install streamlit pandas numpy plotly openpyxl importlib-metadata

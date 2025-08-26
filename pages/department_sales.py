@@ -106,7 +106,7 @@ def show():
     else:
         st.error(f"月度回款列缺失，请检查文件中的列名是否为 '{payment_col_normal}' 和 '{payment_col_overdue}'。")
         return
-
+    
     # 动态计算各周总回款额
     for week_num in available_payment_weeks:
         week_payment_normal = f'第{week_num}周回未超期款'

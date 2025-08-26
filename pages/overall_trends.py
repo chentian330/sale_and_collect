@@ -56,18 +56,34 @@ def display_overall_trends(history_files):
     for month_key in sorted_months:
         file_info = history_files[month_key]
 
-        # 计算各项指标
+        # 计算各项指标 - 使用合计行数据
         total_sales = 0
-        if file_info['sales_df'] is not None and '本月销售额' in file_info['sales_df'].columns:
-            total_sales = file_info['sales_df']['本月销售额'].sum() / 10000
-
         total_payment = 0
-        if file_info['sales_df'] is not None and '本月回款合计' in file_info['sales_df'].columns:
-            total_payment = file_info['sales_df']['本月回款合计'].sum() / 10000
-
         total_overdue = 0
-        if file_info['sales_df'] is not None and '月末逾期未收回额' in file_info['sales_df'].columns:
-            total_overdue = file_info['sales_df']['月末逾期未收回额'].sum() / 10000
+        
+        if file_info['sales_df'] is not None:
+            sales_df = file_info['sales_df']
+            
+            # 查找合计行（员工姓名列为"合计"的行）
+            if '员工姓名' in sales_df.columns:
+                total_row = sales_df[sales_df['员工姓名'] == '合计']
+                
+                if not total_row.empty:
+                    # 获取合计行的各项数据
+                    if '本月销售额' in sales_df.columns:
+                        total_sales_value = total_row['本月销售额'].iloc[0]
+                        if pd.notna(total_sales_value):
+                            total_sales = float(total_sales_value) / 10000
+                    
+                    if '本月回款合计' in sales_df.columns:
+                        total_payment_value = total_row['本月回款合计'].iloc[0]
+                        if pd.notna(total_payment_value):
+                            total_payment = float(total_payment_value) / 10000
+                    
+                    if '月末逾期未收回额' in sales_df.columns:
+                        total_overdue_value = total_row['月末逾期未收回额'].iloc[0]
+                        if pd.notna(total_overdue_value):
+                            total_overdue = float(total_overdue_value) / 10000
 
         trend_data.append({
             '月份': month_key,
